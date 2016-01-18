@@ -433,6 +433,9 @@ ramips_board_detect() {
 			name="linkits7688"
 		fi
 		;;
+	*"FLUN BOARD")
+		name="flun"
+		;;
 	*)
 		name="generic"
 		;;

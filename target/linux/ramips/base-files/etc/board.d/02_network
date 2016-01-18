@@ -137,6 +137,7 @@ ramips_setup_interfaces()
 	hlk-rm04 | \
 	mt7621 | \
 	mt7628 | \
+	flun | \
 	mzk-w300nh2 | \
 	mzk-750dhp | \
 	whr-300hp2 | \
