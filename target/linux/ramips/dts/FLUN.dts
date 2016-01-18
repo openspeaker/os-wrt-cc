@@ -124,8 +124,8 @@
 
 	sdhci@10130000 {
 		status = "okay";
-		mediatek,cd-high;
-//		mediatek,cd-poll;
+//		mediatek,cd-high;
+		mediatek,cd-poll;
 	};
 
 	bootstrap {
