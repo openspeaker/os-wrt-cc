@@ -101,30 +101,3 @@ endef
 
 $(eval $(call KernelPackage,sound-mtk))
 
-
-define KernelPackage/sound-mtk-linkit-hifi
-  TITLE:=Linkit with Openspeaker hifi DAC ONE
-  DEPENDS:= +kmod-sound-soc-core +kmod-regmap +kmod-i2c-ralink @(TARGET_ramips_mt7628||TARGET_ramips_mt7688||TARGET_ramips_mt7620)
-  KCONFIG:= \
-	CONFIG_SND_MT76XX_SOC \
-	CONFIG_SND_MT76XX_I2S \
-	CONFIG_SND_MT76XX_PCM \
-	CONFIG_SND_SOC_WM8960
-  FILES:= \
-	$(LINUX_DIR)/sound/soc/mtk/ralink_gdma.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-i2s-ctl.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-i2s.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-pcm.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-machine.ko \
-	$(LINUX_DIR)/sound/soc/mtk/i2c_wm8960.ko \
-	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8960.ko
-  AUTOLOAD:=$(call AutoLoad,90,ralink_gdma snd-soc-wm8960 i2c_wm8960 snd-soc-mt76xx-i2s-ctl snd-soc-mt76xx-i2s snd-soc-mt76xx-pcm snd-soc-mt76xx-machine)
-  $(call AddDepends/sound)
-endef
-
-define KernelPackage/sound-mtk-linkit-hifi/description
- Alsa modules for linkit smart with openspeaker hifi DAC ONE.
-endef
-
-$(eval $(call KernelPackage,sound-mtk-linkit-hifi))
-
