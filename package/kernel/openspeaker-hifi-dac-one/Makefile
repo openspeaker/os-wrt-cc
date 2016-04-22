@@ -17,14 +17,14 @@ define KernelPackage/sound-mtk-linkit-hifi
 	CONFIG_SND_MT76XX_PCM \
 	CONFIG_SND_SOC_WM8960
   FILES:= \
-	$(PKG_BUILD_DIR)/ralink_gdma.ko \
-	$(PKG_BUILD_DIR)/i2s_ctrl.ko \
-	$(PKG_BUILD_DIR)/mt76xx_i2s.ko \
-	$(PKG_BUILD_DIR)/mt76xx_pcm.ko \
-	$(PKG_BUILD_DIR)/mt76xx_machine.ko \
-	$(PKG_BUILD_DIR)/i2c_wm8960.ko \
-	$(PKG_BUILD_DIR)/wm8960.ko
-  AUTOLOAD:=$(call AutoLoad,90,ralink_gdma wm8960 i2c_wm8960 i2s_ctrl mt76xx_i2s mt76xx_pcm mt76xx_machine)
+	$(PKG_BUILD_DIR)/dac-one-gdma.ko \
+	$(PKG_BUILD_DIR)/dac-one-i2s-ctrl.ko \
+	$(PKG_BUILD_DIR)/dac-one-i2s.ko \
+	$(PKG_BUILD_DIR)/dac-one-pcm.ko \
+	$(PKG_BUILD_DIR)/dac-one-machine.ko \
+	$(PKG_BUILD_DIR)/dac-one-codec-i2c.ko \
+	$(PKG_BUILD_DIR)/dac-one-codec.ko
+  AUTOLOAD:=$(call AutoLoad,90,dac-one-gdma dac-one-codec dac-one-codec-i2c dac-one-i2s-ctrl dac-one-i2s dac-one-pcm dac-one-machine)
   $(call AddDepends/sound)
 endef
 
