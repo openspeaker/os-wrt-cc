@@ -1,21 +1,15 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_NAME:=sound-mtk-linkit-hifi
+PKG_NAME:=sound-os-dac-one
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
-#  KCONFIG:= 	CONFIG_SND_MT76XX_SOC CONFIG_SND_MT76XX_I2S	CONFIG_SND_MT76XX_PCM CONFIG_SND_SOC_WM8960
 
-define KernelPackage/sound-mtk-linkit-hifi
+define KernelPackage/sound-os-dac-one
   SUBMENU:=Sound Support
   TITLE:=Linkit with Openspeaker hifi DAC ONE
-  DEPENDS:= +kmod-sound-soc-core +kmod-regmap +kmod-i2c-ralink @(TARGET_ramips_mt7628||TARGET_ramips_mt7688||TARGET_ramips_mt7620)
-  KCONFIG:= \
-	CONFIG_SND_MT76XX_SOC \
-	CONFIG_SND_MT76XX_I2S \
-	CONFIG_SND_MT76XX_PCM \
-	CONFIG_SND_SOC_WM8960
+  DEPENDS:= +kmod-sound-soc-core +kmod-regmap +kmod-i2c-ralink
   FILES:= \
 	$(PKG_BUILD_DIR)/dac-one-gdma.ko \
 	$(PKG_BUILD_DIR)/dac-one-i2s-ctrl.ko \
@@ -25,10 +19,9 @@ define KernelPackage/sound-mtk-linkit-hifi
 	$(PKG_BUILD_DIR)/dac-one-codec-i2c.ko \
 	$(PKG_BUILD_DIR)/dac-one-codec.ko
   AUTOLOAD:=$(call AutoLoad,90,dac-one-gdma dac-one-codec dac-one-codec-i2c dac-one-i2s-ctrl dac-one-i2s dac-one-pcm dac-one-machine)
-  $(call AddDepends/sound)
 endef
 
-define KernelPackage/sound-mtk-linkit-hifi/description
+define KernelPackage/sound-os-dac-one/description
  Alsa modules for linkit smart with openspeaker hifi DAC ONE.
 endef
 
@@ -65,5 +58,5 @@ define Build/Compile
 		modules
 endef
 
-$(eval $(call KernelPackage,sound-mtk-linkit-hifi))
+$(eval $(call KernelPackage,sound-os-dac-one))
 
