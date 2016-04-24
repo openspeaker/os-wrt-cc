@@ -1024,12 +1024,12 @@ static struct snd_soc_dai_driver wm8960_dai = {
 		.channels_max = 2,
 		.rates = WM8960_RATES,
 		.formats = WM8960_FORMATS,},
-	.capture = {
+/*	.capture = {
 		.stream_name = "Capture",
 		.channels_min = 1,
 		.channels_max = 2,
 		.rates = WM8960_RATES,
-		.formats = WM8960_FORMATS,},
+		.formats = WM8960_FORMATS,}, */
 	.ops = &wm8960_dai_ops,
 	.symmetric_rates = 1,
 };

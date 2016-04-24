@@ -21,9 +21,6 @@
 #include <linux/pci.h>
 #include <linux/delay.h>
 #include "ralink_gdma.h"
-#if defined(CONFIG_I2S_WITH_AEC)
-#include "../aec/aec_api.h"
-#endif
 
 #ifdef  CONFIG_DEVFS_FS
 #include <linux/devfs_fs_kernel.h>
@@ -37,12 +34,6 @@ static	devfs_handle_t devfs_handle;
 #include "mt76xx_machine.h"
 #endif
 
-#if defined(CONFIG_I2S_WM8750)
-#include "../codec/i2c_wm8750.h"
-#endif
-#if defined(CONFIG_I2S_WM8751)
-#include "../codec/i2c_wm8751.h"
-#endif
 #if defined(CONFIG_I2S_WM8960)
 #include "i2c_wm8960.h"
 #endif
@@ -62,10 +53,8 @@ static int _printk(char *fmt, ...)
 #if defined(CONFIG_I2S_WM8960)
 extern void audiohw_set_frequency(int fsel, int codec_pll_en);
 void audiohw_set_apll(int srate);
-#elif defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
-extern void audiohw_set_frequency(int fsel);
 #endif
-#if defined(CONFIG_I2S_WM8960)||defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 extern int audiohw_set_lineout_vol(int Aout, int vol_l, int vol_r);
 extern int audiohw_set_master_vol(int vol_l, int vol_r);
 extern int audiohw_set_linein_vol(int vol_l, int vol_r);
@@ -146,17 +135,6 @@ static dma_addr_t i2s_mmap_addr[MAX_I2S_PAGE*2];
 unsigned long i2s_inclk_15p625Mhz[11] = {60<<8, 43<<8,  40<<8, 30<<8, 21<<8,  19<<8, 14<<8, 10<<8, 9<<8,  7<<8,  4<<8};
 unsigned long i2s_exclk_12p288Mhz[11] = {47<<8, 34<<8,  31<<8, 23<<8, 16<<8,  15<<8, 11<<8,  8<<8, 7<<8,  5<<8,  3<<8};
 unsigned long i2s_exclk_12Mhz[11]     = {46<<8, 33<<8,  30<<8, 22<<8, 16<<8,  15<<8, 11<<8,  8<<8, 7<<8,  5<<8,  3<<8};
-#if defined(CONFIG_I2S_WM8750) || defined(CONFIG_SND_SOC_WM8750)
-					/* 8k  11.025k  12k   16k  22.05k  24k  32k   44.1k   48k  88.2k   96k*/
-unsigned long i2s_codec_12p288Mhz[11]  = {0x0C,  0x00, 0x10, 0x14,  0x38, 0x38, 0x18,  0x20, 0x00,  0x00, 0x1C};
-unsigned long i2s_codec_12Mhz[11]      = {0x0C,  0x32, 0x10, 0x14,  0x37, 0x38, 0x18,  0x22, 0x00,  0x3E, 0x1C};
-unsigned long i2s_codec_24p576Mhz[11]  = {0x4C,  0x00, 0x50, 0x54,  0x00, 0x78, 0x58,  0x00, 0x40,  0x00, 0x5C};
-unsigned long i2s_codec_18p432Mhz[11]  = {0x0e,  0x32, 0x12, 0x16,  0x36, 0x3a, 0x1a,  0x22, 0x02,  0x3e, 0x1e};
-#endif
-#if defined(CONFIG_I2S_WM8751) || defined(CONFIG_SND_SOC_WM8751)
-unsigned long i2s_codec_12p288Mhz[11]  = {0x04,  0x00, 0x10, 0x14,  0x38, 0x38, 0x18,  0x20, 0x00,  0x00, 0x1C};
-unsigned long i2s_codec_12Mhz[11]      = {0x04,  0x32, 0x10, 0x14,  0x37, 0x38, 0x18,  0x22, 0x00,  0x3E, 0x1C};
-#endif
 #if defined(CONFIG_I2S_WM8960) || defined(CONFIG_SND_SOC_WM8960)
 unsigned long i2s_codec_12p288Mhz[11]  = {0x36,  0x24, 0x24, 0x1b,  0x12, 0x12, 0x09,  0x00, 0x00,  0x00, 0x00};
 unsigned long i2s_codec_12Mhz[11]      = {0x36,  0x24, 0x24, 0x1b,  0x12, 0x12, 0x09,  0x00, 0x00,  0x00, 0x00};
@@ -215,9 +193,6 @@ unsigned long i2s_inclk_int[11]  = { 78,    56,   52,  39,   28,    26,  19,   1
 unsigned long i2s_inclk_comp[11] = { 64,   352,   42,  32,  176,    21, 272,   88,   10, 455,  261};
 #endif
 
-#if defined(CONFIG_I2S_WITH_AEC)
-aecFuncTbl_t *aecFuncP;
-#endif
 /* USB mode 22.05Khz register value in datasheet is 0x36 but will cause slow clock, 0x37 is correct value */
 /* USB mode 44.1Khz register value in datasheet is 0x22 but will cause slow clock, 0x23 is correct value */
 
@@ -275,18 +250,6 @@ int __init i2s_mod_init(void)
 		return -EFAULT;
 	device_create(i2smodule_class, NULL, MKDEV(i2sdrv_major, 0), I2SDRV_DEVNAME);
 #endif	
-
-#if defined(CONFIG_I2S_WITH_AEC)
-	_printk("AEC FuncP init \n");
-	/*Add by mtk04880*/
-	aecFuncP = kmalloc(sizeof(aecFuncTbl_t), GFP_KERNEL);
-	/*If aecFuncP cannot request memory,it will be ignored in I2S module. Since AEC & I2S are independent
-	 * when AEC module is inserted,It will return err message (but I2S will keep running without AEC support)
-	 * */
-	if(aecFuncP){
-		memset(aecFuncP,0,sizeof(aecFuncTbl_t));
-	}
-#endif
 
 	return 0;
 }
@@ -1628,34 +1591,26 @@ int i2s_mode_config(u32 slave_en)
 
 int i2s_codec_frequency_config(i2s_config_type* ptri2s_config, unsigned long index)
 {
-#if defined(CONFIG_I2S_WM8960)||defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 	unsigned long data;
 	unsigned long* pTable;
 #endif
 
 #if defined(CONFIG_I2S_MCLK_12MHZ)
-#if defined(CONFIG_I2S_WM8960)||defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 	pTable = i2s_codec_12Mhz;
 	data = pTable[index];
 #endif
 #if defined(CONFIG_I2S_WM8960)
 	audiohw_set_frequency(data, ptri2s_config->codec_pll_en);
-#elif defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
-	audiohw_set_frequency(data|0x01);
 #endif	
 #else
-#if defined(CONFIG_I2S_WM8960)||defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
-#if defined(MT7623_FPGA_BOARD) && defined(CONFIG_I2S_WM8750)
-	pTable = i2s_codec_18p432Mhz;
-#else
+#if defined(CONFIG_I2S_WM8960)
 	pTable = i2s_codec_12p288Mhz;
-#endif
 	data = pTable[index];
 #endif
 #if defined(CONFIG_I2S_WM8960)
 	audiohw_set_frequency(data, ptri2s_config->codec_pll_en);
-#elif defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
-	audiohw_set_frequency(data);
 #endif
 #endif
 	return 0;
@@ -1769,7 +1724,7 @@ int i2s_clock_enable(i2s_config_type* ptri2s_config)
 
 	if(!ptri2s_config->bALSAEnable)
 	{
-#if defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)|| defined(CONFIG_I2S_WM8960)
+#if defined(CONFIG_I2S_WM8960)
 	i2s_codec_enable(ptri2s_config);
 #endif
 	i2s_codec_frequency_config(ptri2s_config,index);
@@ -1782,7 +1737,7 @@ int i2s_clock_disable(i2s_config_type* ptri2s_config)
 {
 	if(!ptri2s_config->bALSAEnable)
 	{
-#if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 	i2s_codec_disable(ptri2s_config);
 #endif
 	}
@@ -1800,11 +1755,9 @@ int i2s_codec_enable(i2s_config_type* ptri2s_config)
 {
 	
 	int AIn = 0, AOut = 0;
-#if 1
-#if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 	/* Codec initialization */
 	audiohw_preinit();
-#endif
 #endif
 
 #if defined(CONFIG_I2S_WM8960)
@@ -1824,20 +1777,11 @@ int i2s_codec_enable(i2s_config_type* ptri2s_config)
 	audiohw_postinit(!(ptri2s_config->slave_en), AIn, AOut, ptri2s_config->codec_pll_en, ptri2s_config->wordlen_24b);
 	audiohw_micboost(ptri2s_config->micboost);	
 	audiohw_micin(ptri2s_config->micin);
-#elif defined(CONFIG_I2S_WM8750)
-	audiohw_postinit(!(ptri2s_config->slave_en), AIn, AOut, ptri2s_config->wordlen_24b);
 #endif
 	MSG("AOut=%d, AIn=%d\n", AOut, AIn);
 #else
-#if defined(CONFIG_I2S_WM8750)
-	audiohw_postinit(!(ptri2s_config->slave_en), 0, 1);
-#elif defined(CONFIG_I2S_WM8960)	
+#if defined(CONFIG_I2S_WM8960)	
 	audiohw_postinit(!(ptri2s_config->slave_en), 1, 1, ptri2s_config->codec_pll_en);
-#elif defined(CONFIG_I2S_WM8751)	
-	if(ptri2s_config->slave_en==0)
-		audiohw_postinit(1,1);
-	else
-		audiohw_postinit(0,1);
 #endif		
 #endif
 	return 0;	
@@ -1845,7 +1789,7 @@ int i2s_codec_enable(i2s_config_type* ptri2s_config)
 
 int i2s_codec_disable(i2s_config_type* ptri2s_config)
 {
-#if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 	audiohw_close();
 #endif
 	return 0;
@@ -2122,11 +2066,6 @@ int i2s_dma_tx_transf_data(i2s_config_type* ptri2s_config, u32 dma_ch)
                 pi2s_config->dmach = GDMA_I2S_TX1;
                 pi2s_config->tx_r_idx = (pi2s_config->tx_r_idx+1)%MAX_I2S_PAGE;
 	}
-#if defined(CONFIG_I2S_WITH_AEC)
-	if(aecFuncP->AECFeEnq){
-		aecFuncP->AECFeEnq(0,pi2s_config->pMMAPTxBufPtr[pi2s_config->tx_r_idx],I2S_PAGE_SIZE);
-	}
-#endif
 	return 0;
 }
 
@@ -2205,11 +2144,6 @@ int i2s_dma_rx_transf_data(i2s_config_type* ptri2s_config, u32 dma_ch)
                 pi2s_config->dmach = GDMA_I2S_RX1;
 
         }
-#if defined(CONFIG_I2S_WITH_AEC)
-		if(aecFuncP->AECNeEnq){
-			aecFuncP->AECNeEnq(0,pi2s_config->pMMAPRxBufPtr[rx_w_idx],I2S_PAGE_SIZE);
-		}
-#endif
 	return 0;
 }
 
@@ -2843,11 +2777,6 @@ int i2s_get_audio(i2s_config_type* ptri2s_config, unsigned long arg)
 			spin_unlock_irqrestore(&ptri2s_config->lock, flags);
 			interruptible_sleep_on(&(ptri2s_config->i2s_rx_qh));
 		}
-#if defined(CONFIG_I2S_WITH_AEC)
-		if(aecFuncP->AECECDeq){
-			aecFuncP->AECECDeq(0,pi2s_config->pMMAPRxBufPtr[ptri2s_config->rx_r_idx],I2S_PAGE_SIZE);
-		}
-#endif
 	}while(1);
 
 	return 0;
@@ -2880,14 +2809,6 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 			spin_unlock(&ptri2s_config->lock);
 			break;
 		}	
-#elif defined(CONFIG_I2S_WM8750)
-		if((arg>MAX_SRATE_HZ)||(arg<MIN_SRATE_HZ))
-		{
-			MSG("Audio sampling rate %u should be %d ~ %d Hz. Set SRate to 96000Hz\n", (u32)arg, MIN_SRATE_HZ, MAX_SRATE_HZ);
-			ptri2s_config->srate = 96000;
-			spin_unlock(&ptri2s_config->lock);
-			break;
-		}
 #endif
 		ptri2s_config->srate = arg;
 		spin_unlock_irqrestore(&ptri2s_config->lock, flags);
@@ -2906,9 +2827,7 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 		spin_unlock_irqrestore(&ptri2s_config->lock, flags);
 		
 		spin_lock_irqsave(&ptri2s_config->lock, flags);
-#if (defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751))
-		audiohw_set_master_vol(arg,arg);
-#elif defined(CONFIG_I2S_WM8960)
+#if defined(CONFIG_I2S_WM8960)
 		audiohw_set_lineout_vol(1, ptri2s_config->txvol, ptri2s_config->txvol);
 #endif
 		spin_unlock_irqrestore(&ptri2s_config->lock, flags);
@@ -3038,7 +2957,7 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 		spin_unlock_irqrestore(&ptri2s_config->lock, flags);
 	
 		spin_lock_irqsave(&ptri2s_config->lock, flags);
-#if defined(CONFIG_I2S_WM8960)||defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 		audiohw_set_lineout_vol(1, ptri2s_config->txvol, ptri2s_config->txvol);
 #endif
 		GdmaUnMaskChannel(GDMA_I2S_TX0);
@@ -3104,7 +3023,7 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 			i2s_clock_enable(ptri2s_config);
 
 #if defined(CONFIG_I2S_TXRX)
-#if defined(CONFIG_I2S_WM8960)||defined(CONFIG_I2S_WM8750)||defined(CONFIG_I2S_WM8751)
+#if defined(CONFIG_I2S_WM8960)
 		audiohw_set_linein_vol(ptri2s_config->rxvol,  ptri2s_config->rxvol);
 #endif
 #endif
@@ -3507,9 +3426,6 @@ EXPORT_SYMBOL(gdma_En_Switch);
 EXPORT_SYMBOL(i2s_audio_exchange);
 EXPORT_SYMBOL(gdma_mask_handler);
 EXPORT_SYMBOL(gdma_unmask_handler);
-#if defined(CONFIG_I2S_WITH_AEC)
-EXPORT_SYMBOL(aecFuncP);
-#endif
 module_init(i2s_mod_init);
 module_exit(i2s_mod_exit);
 

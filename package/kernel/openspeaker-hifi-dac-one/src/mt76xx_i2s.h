@@ -1,5 +1,5 @@
 /*
- * mtk_i2s.h
+ * mt76xx_i2s.h
  *
  *  Created on: 2013/8/20
  *      Author: MTK04880

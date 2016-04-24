@@ -74,6 +74,7 @@
 
 /* HW feature definiations */
 #if defined(CONFIG_RALINK_RT3883)
+#error 0
 #define CONFIG_I2S_TXRX			1
 #define CONFIG_I2S_IN_MCLK		1
 //#define CONFIG_I2S_WS_EDGE		1

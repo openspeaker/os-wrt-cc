@@ -4,9 +4,11 @@
  */
 #include <linux/init.h>
 #include <linux/version.h>
+
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
 #include <linux/sched.h>
 #endif
+
 #include <linux/module.h>
 #include <linux/kernel.h> /* printk() */
 #include <linux/slab.h> /* kmalloc() */
@@ -15,9 +17,11 @@
 #include <linux/types.h> /* size_t */
 #include <linux/proc_fs.h>
 #include <linux/fcntl.h> /* O_ACCMODE */
+
 #if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,36)
 #include <asm/system.h> /* cli(), *_flags */
 #endif
+
 #include <asm/uaccess.h> /* copy_from/to_user */
 #include <linux/interrupt.h>
 #include <linux/mm.h>
@@ -35,6 +39,7 @@
 #include "ralink_gdma.h"
 #include "mt76xx_i2s.h"
 #include "mt76xx_machine.h"
+
 #if defined(CONFIG_SND_SOC_WM8960)
 #include "wm8960.h"
 #endif
@@ -172,9 +177,12 @@ static int mt76xx_codec_clock_hwparams(struct snd_pcm_substream *substream,
 	}
 
 #endif
-	if(!rtd->slave_en)
+	if(!rtd->slave_en) {
+    printk("ospk:so here for 7866 master mode, codec slave mode\n");
 		snd_soc_dai_set_fmt(codec_dai,SND_SOC_DAIFMT_CBS_CFS|SND_SOC_DAIFMT_I2S|SND_SOC_DAIFMT_NB_NF);
+  }
 	else{
+    printk("ospk:so here for 7866 slave mode, codec master mode\n");
 		snd_soc_dai_set_fmt(codec_dai,SND_SOC_DAIFMT_CBM_CFM|SND_SOC_DAIFMT_I2S|SND_SOC_DAIFMT_NB_NF);
 	}
 	mdelay(5);

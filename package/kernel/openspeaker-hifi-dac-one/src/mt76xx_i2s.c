@@ -1,5 +1,5 @@
 /*
- * mtk_audio_drv.c
+ * mt76xx_i2s.c
  *
  *  Created on: 2013/8/20
  *      Author: MTK04880
