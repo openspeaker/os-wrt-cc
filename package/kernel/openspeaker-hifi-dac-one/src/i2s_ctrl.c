@@ -35,7 +35,7 @@ static	devfs_handle_t devfs_handle;
 #endif
 
 #if defined(CONFIG_I2S_WM8960)
-#include "i2c_wm8960.h"
+//#include "i2c_wm8960.h"
 #endif
 
 static int i2sdrv_major =  191;
@@ -51,16 +51,16 @@ static int _printk(char *fmt, ...)
 
 /* external functions declarations */
 #if defined(CONFIG_I2S_WM8960)
-extern void audiohw_set_frequency(int fsel, int codec_pll_en);
-void audiohw_set_apll(int srate);
+/// extern void audiohw_set_frequency(int fsel, int codec_pll_en);
+/// void audiohw_set_apll(int srate);
 #endif
 #if defined(CONFIG_I2S_WM8960)
-extern int audiohw_set_lineout_vol(int Aout, int vol_l, int vol_r);
-extern int audiohw_set_master_vol(int vol_l, int vol_r);
-extern int audiohw_set_linein_vol(int vol_l, int vol_r);
+/// extern int audiohw_set_lineout_vol(int Aout, int vol_l, int vol_r);
+/// extern int audiohw_set_master_vol(int vol_l, int vol_r);
+/// extern int audiohw_set_linein_vol(int vol_l, int vol_r);
 #endif
 
-extern void audiohw_micboost(int boostgain);
+/// extern void audiohw_micboost(int boostgain);
 
 extern int GdmaI2sTx(uint32_t Src, uint32_t Dst, uint8_t TxNo, uint16_t TransCount,
                 void (*DoneIntCallback)(uint32_t data),
@@ -1602,7 +1602,7 @@ int i2s_codec_frequency_config(i2s_config_type* ptri2s_config, unsigned long ind
 	data = pTable[index];
 #endif
 #if defined(CONFIG_I2S_WM8960)
-	audiohw_set_frequency(data, ptri2s_config->codec_pll_en);
+///	audiohw_set_frequency(data, ptri2s_config->codec_pll_en);
 #endif	
 #else
 #if defined(CONFIG_I2S_WM8960)
@@ -1610,7 +1610,7 @@ int i2s_codec_frequency_config(i2s_config_type* ptri2s_config, unsigned long ind
 	data = pTable[index];
 #endif
 #if defined(CONFIG_I2S_WM8960)
-	audiohw_set_frequency(data, ptri2s_config->codec_pll_en);
+///	audiohw_set_frequency(data, ptri2s_config->codec_pll_en);
 #endif
 #endif
 	return 0;
@@ -1757,14 +1757,14 @@ int i2s_codec_enable(i2s_config_type* ptri2s_config)
 	int AIn = 0, AOut = 0;
 #if defined(CONFIG_I2S_WM8960)
 	/* Codec initialization */
-	audiohw_preinit();
+///	audiohw_preinit();
 #endif
 
 #if defined(CONFIG_I2S_WM8960)
 	if(ptri2s_config->codec_pll_en)
 	{
 		MSG("Codec PLL EN = %d\n", pi2s_config->codec_pll_en);
-		audiohw_set_apll(ptri2s_config->srate);
+///		audiohw_set_apll(ptri2s_config->srate);
 	}
 #endif
 
@@ -1774,14 +1774,14 @@ int i2s_codec_enable(i2s_config_type* ptri2s_config)
 	if((ptri2s_config->bRxDMAEnable) || (ptri2s_config->txrx_coexist))
 		AIn = 1;
 #if defined(CONFIG_I2S_WM8960)
-	audiohw_postinit(!(ptri2s_config->slave_en), AIn, AOut, ptri2s_config->codec_pll_en, ptri2s_config->wordlen_24b);
-	audiohw_micboost(ptri2s_config->micboost);	
-	audiohw_micin(ptri2s_config->micin);
+///	audiohw_postinit(!(ptri2s_config->slave_en), AIn, AOut, ptri2s_config->codec_pll_en, ptri2s_config->wordlen_24b);
+///	audiohw_micboost(ptri2s_config->micboost);	
+///	audiohw_micin(ptri2s_config->micin);
 #endif
 	MSG("AOut=%d, AIn=%d\n", AOut, AIn);
 #else
 #if defined(CONFIG_I2S_WM8960)	
-	audiohw_postinit(!(ptri2s_config->slave_en), 1, 1, ptri2s_config->codec_pll_en);
+///	audiohw_postinit(!(ptri2s_config->slave_en), 1, 1, ptri2s_config->codec_pll_en);
 #endif		
 #endif
 	return 0;	
@@ -1790,7 +1790,7 @@ int i2s_codec_enable(i2s_config_type* ptri2s_config)
 int i2s_codec_disable(i2s_config_type* ptri2s_config)
 {
 #if defined(CONFIG_I2S_WM8960)
-	audiohw_close();
+///	audiohw_close();
 #endif
 	return 0;
 }	
@@ -2828,7 +2828,7 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 		
 		spin_lock_irqsave(&ptri2s_config->lock, flags);
 #if defined(CONFIG_I2S_WM8960)
-		audiohw_set_lineout_vol(1, ptri2s_config->txvol, ptri2s_config->txvol);
+///		audiohw_set_lineout_vol(1, ptri2s_config->txvol, ptri2s_config->txvol);
 #endif
 		spin_unlock_irqrestore(&ptri2s_config->lock, flags);
 		break;
@@ -2958,7 +2958,7 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 	
 		spin_lock_irqsave(&ptri2s_config->lock, flags);
 #if defined(CONFIG_I2S_WM8960)
-		audiohw_set_lineout_vol(1, ptri2s_config->txvol, ptri2s_config->txvol);
+///		audiohw_set_lineout_vol(1, ptri2s_config->txvol, ptri2s_config->txvol);
 #endif
 		GdmaUnMaskChannel(GDMA_I2S_TX0);
 
@@ -3024,7 +3024,7 @@ int i2s_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigne
 
 #if defined(CONFIG_I2S_TXRX)
 #if defined(CONFIG_I2S_WM8960)
-		audiohw_set_linein_vol(ptri2s_config->rxvol,  ptri2s_config->rxvol);
+///		audiohw_set_linein_vol(ptri2s_config->rxvol,  ptri2s_config->rxvol);
 #endif
 #endif
 		spin_unlock_irqrestore(&ptri2s_config->lock, flags);

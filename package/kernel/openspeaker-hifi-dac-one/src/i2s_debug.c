@@ -20,7 +20,7 @@
 #include "../codec/i2c_wm8751.h"
 #endif
 #if defined(CONFIG_I2S_WM8960)
-#include "i2c_wm8960.h"
+/// #include "i2c_wm8960.h"
 #endif
 
 
@@ -41,14 +41,14 @@ extern int i2s_pll_config_mt7621(unsigned long index);
 extern int i2s_pll_config_mt7623(unsigned long index);
 
 #if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
-extern void audiohw_loopback(int fsel);
-extern void audiohw_bypass(void);
-extern int audiohw_set_lineout_vol(int Aout, int vol_l, int vol_r);
-extern int audiohw_set_linein_vol(int vol_l, int vol_r);
+/// extern void audiohw_loopback(int fsel);
+/// extern void audiohw_bypass(void);
+/// extern int audiohw_set_lineout_vol(int Aout, int vol_l, int vol_r);
+/// extern int audiohw_set_linein_vol(int vol_l, int vol_r);
 #endif
 
 #if defined(CONFIG_I2S_WM8960)
-extern void audiohw_codec_exlbk(void);
+/// extern void audiohw_codec_exlbk(void);
 #endif
 
 unsigned long txbuffer[512] = {
@@ -629,27 +629,27 @@ int i2s_debug_cmd(unsigned int cmd, unsigned long arg)
 		#endif
 
 		#if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
-			audiohw_preinit();
+///			audiohw_preinit();
 		#endif
 
 
 		#if defined (CONFIG_I2S_WM8960)
-			audiohw_postinit(1, 1, 1, 1, 0); // for codec apll enable, 16 bit word length 
+///			audiohw_postinit(1, 1, 1, 1, 0); // for codec apll enable, 16 bit word length 
 		#elif defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
-    			audiohw_postinit(1, 1, 1, 0); // for 16 bit word length 
+///    			audiohw_postinit(1, 1, 1, 0); // for 16 bit word length 
 		#endif
 
 
 		#if defined (CONFIG_I2S_WM8960)
-			audiohw_set_frequency(data, 1);	// for codec apll enable
+///			audiohw_set_frequency(data, 1);	// for codec apll enable
 		#elif defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
-            		audiohw_set_frequency(data|0x1);
+///            		audiohw_set_frequency(data|0x1);
 		#endif
 
 
 		#if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
-			audiohw_set_lineout_vol(1, 100, 100);
-			audiohw_set_linein_vol(100, 100);
+///			audiohw_set_lineout_vol(1, 100, 100);
+///			audiohw_set_linein_vol(100, 100);
 		#endif
 		
 
@@ -676,7 +676,7 @@ int i2s_debug_cmd(unsigned int cmd, unsigned long arg)
 		#endif
 		
 		#if defined(CONFIG_I2S_WM8960) || defined(CONFIG_I2S_WM8750) || defined(CONFIG_I2S_WM8751)
-			audiohw_bypass();	/* did not work */
+///			audiohw_bypass();	/* did not work */
 		#endif
 		#endif
 			break;	
@@ -686,7 +686,7 @@ int i2s_debug_cmd(unsigned int cmd, unsigned long arg)
 			break;
 #if defined(CONFIG_I2S_WM8960)
 		case I2S_DEBUG_CODEC_EXLBK:
-			audiohw_codec_exlbk();
+///			audiohw_codec_exlbk();
 			break;
 #endif	
 		default:

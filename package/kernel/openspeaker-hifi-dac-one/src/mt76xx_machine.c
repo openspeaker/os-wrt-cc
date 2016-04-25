@@ -240,6 +240,8 @@ static int __init mt76xx_machine_init(void)
 	struct i2c_adapter *adapter = NULL;
         struct i2c_client *client = NULL;
 
+#if 1
+
 	adapter = i2c_get_adapter(I2C_AUDIO_DEV_ID);
 	if (!adapter)
 		return -ENODEV;
@@ -254,6 +256,8 @@ static int __init mt76xx_machine_init(void)
 	i2c_get_clientdata(client);
 
 	i2c_put_adapter(adapter);
+
+#endif
 
 	soc_mtk_i2s_dev =
 		platform_device_register_simple("mt76xx-i2s", -1, NULL, 0);

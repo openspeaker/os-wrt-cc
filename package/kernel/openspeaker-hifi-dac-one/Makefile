@@ -16,10 +16,12 @@ define KernelPackage/sound-os-dac-one
 	$(PKG_BUILD_DIR)/dac-one-i2s.ko \
 	$(PKG_BUILD_DIR)/dac-one-pcm.ko \
 	$(PKG_BUILD_DIR)/dac-one-machine.ko \
-	$(PKG_BUILD_DIR)/dac-one-codec-i2c.ko \
 	$(PKG_BUILD_DIR)/dac-one-codec.ko
-  AUTOLOAD:=$(call AutoLoad,90,dac-one-gdma dac-one-codec dac-one-codec-i2c dac-one-i2s-ctrl dac-one-i2s dac-one-pcm dac-one-machine)
+  AUTOLOAD:=$(call AutoLoad,90,dac-one-gdma dac-one-codec dac-one-i2s-ctrl dac-one-i2s dac-one-pcm dac-one-machine)
 endef
+
+	
+#	AUTOLOAD:=$(call AutoLoad,90,dac-one-gdma dac-one-codec dac-one-codec-i2c dac-one-i2s-ctrl dac-one-i2s dac-one-pcm dac-one-machine)
 
 define KernelPackage/sound-os-dac-one/description
  Alsa modules for linkit smart with openspeaker hifi DAC ONE.
