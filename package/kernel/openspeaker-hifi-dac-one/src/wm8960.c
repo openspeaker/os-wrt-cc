@@ -184,7 +184,7 @@ static const struct snd_soc_dai_ops wm8960_dai_ops = {
 };
 
 static struct snd_soc_dai_driver wm8960_dai = {
-	.name = "wm8960-hifi",
+	.name = "wm8740-dac",
 	.playback = {
 		.stream_name = "Playback",
 		.channels_min = 1,
@@ -230,6 +230,7 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8960 = {
 	.resume =	wm8960_resume,
 };
 
+
 static int wm8960_i2c_probe(struct i2c_client *i2c,
 			    const struct i2c_device_id *id)
 {
@@ -249,7 +250,7 @@ static int wm8960_i2c_remove(struct i2c_client *client)
 }
 
 static const struct i2c_device_id wm8960_i2c_id[] = {
-	{ "wm8960", 0 },
+	{ "wm8740", 0 },
 	{ }
 };
 
@@ -258,7 +259,7 @@ MODULE_DEVICE_TABLE(i2c, wm8960_i2c_id);
 
 static struct i2c_driver wm8960_i2c_driver = {
        .driver = {
-               .name = "wm8960",
+               .name = "wm8740",
                .owner = THIS_MODULE,
        },
        .probe =    wm8960_i2c_probe,
