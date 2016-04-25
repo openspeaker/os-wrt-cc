@@ -74,8 +74,8 @@ static struct snd_soc_dai_link mtk_audio_dai = {
 	.name = "mtk_dai",
 	.stream_name = "WMserious PCM",
 	.cpu_dai_name	= "mt76xx-i2s",
-	.codec_dai_name	= "wm8740-dac",
-	.codec_name	= "wm8740.0-001a",
+	.codec_dai_name	= "wm8741-dac",
+	.codec_name	= "wm8741.0-001a",
 	.platform_name	= "mt76xx-pcm",
 	.ignore_pmdown_time = true,
 	.init = mt76xx_codec_init,
@@ -221,9 +221,9 @@ static struct i2c_board_info i2c_board_info[] = {
 #if defined(CONFIG_SND_SOC_WM8750)
 		I2C_BOARD_INFO("wm8750", (0x36 >> 1)),
 #elif defined(CONFIG_SND_SOC_WM8960)
-		I2C_BOARD_INFO("codec_wm8740", (0x34)),
+		I2C_BOARD_INFO("codec_wm8741", (0x34)),
 	}, {
-		I2C_BOARD_INFO("wm8740", (0x34 >> 1)),
+		I2C_BOARD_INFO("wm8741", (0x34 >> 1)),
 #endif
 	}
 };
