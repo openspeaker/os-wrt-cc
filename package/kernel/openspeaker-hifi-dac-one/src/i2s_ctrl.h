@@ -101,7 +101,7 @@
 #endif
 
 /* This is decided in menuconfig */
-#define CONFIG_I2S_MMAP           	1
+// #define CONFIG_I2S_MMAP           	1
 
 /* For MT7623 ASIC PLL Setting */
 #if defined(CONFIG_ARCH_MT7623)
