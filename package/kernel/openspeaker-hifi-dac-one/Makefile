@@ -9,7 +9,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/sound-os-dac-one
   SUBMENU:=Sound Support
   TITLE:=Linkit with Openspeaker hifi DAC ONE
-  DEPENDS:= +kmod-sound-soc-core +kmod-regmap +kmod-i2c-ralink
+  DEPENDS:= +kmod-sound-soc-core +kmod-regmap +kmod-i2c-ralink +kmod-spi-gpio-custom
   FILES:= \
 	$(PKG_BUILD_DIR)/dac-one-gdma.ko \
 	$(PKG_BUILD_DIR)/dac-one-i2s-ctrl.ko \
