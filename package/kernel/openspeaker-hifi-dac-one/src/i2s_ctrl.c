@@ -1265,7 +1265,8 @@ int i2s_refclk_gpio_out_config(void)
 	
 	/* Set REFCLK GPIO pin as REFCLK mode*/
 #if defined(CONFIG_RALINK_MT7620)
-	data = i2s_inw(RALINK_SYSCTL_BASE+0x60);
+#error 0
+    	data = i2s_inw(RALINK_SYSCTL_BASE+0x60);
     	data &= ~(0x03<<21);  /* WDT */
     	data |= (1<<21);
 	//data &= ~(0x03<<16);  /* PERST */
@@ -1273,6 +1274,7 @@ int i2s_refclk_gpio_out_config(void)
     	i2s_outw(RALINK_SYSCTL_BASE+0x60, data);
 #endif
 #if defined(CONFIG_RALINK_MT7621)
+#error 1
 	data = i2s_inw(RALINK_SYSCTL_BASE+0x60);
 	//data &= ~(0x3<<10); /* PERST */
 	//data |= (0x2<<10);
@@ -1281,7 +1283,8 @@ int i2s_refclk_gpio_out_config(void)
 	i2s_outw(RALINK_SYSCTL_BASE+0x60, data);
 	MSG("Set 0x60 register\n");
 #endif
-#if defined(CONFIG_RALINK_MT7628)
+#if defined(CONFIG_RALINK_MT7628)  && 0   // && 0 by opsk, pls dont touch my gpio
+#error 2
 	data = i2s_inw(RALINK_SYSCTL_BASE+0x60);
 	data &= ~(0x1<<18);
 	i2s_outw(RALINK_SYSCTL_BASE+0x60, data);
@@ -1377,6 +1380,7 @@ int i2s_master_clock_gpio_out_mt7623(void)
 	return 0;
 }
 
+
 int i2s_share_pin_mt7623(i2s_config_type* ptri2s_config)
 {
 	unsigned long data;
@@ -1439,9 +1443,11 @@ int i2s_share_pin_config(i2s_config_type* ptri2s_config)
 	data |= 0x00000010;
 	i2s_outw(RALINK_SYSCTL_BASE+0x60, data);
 #elif defined(CONFIG_RALINK_MT7628)	
-	data = i2s_inw(RALINK_SYSCTL_BASE+0x60); 
+  data = i2s_inw(RALINK_SYSCTL_BASE+0x60); 
 	data &= ~(0x3<<6);    /* I2S_MODE */ 
+#if 0  // #if 0 by ospk, pls dont touch my gpios
 	data &= ~(0x3<<20);   /* I2C_MODE */
+#endif // by opsk
 	i2s_outw(RALINK_SYSCTL_BASE+0x60, data);
 #elif defined(CONFIG_ARCH_MT7623)
 	i2s_share_pin_mt7623(ptri2s_config);
@@ -1708,8 +1714,12 @@ int i2s_clock_enable(i2s_config_type* ptri2s_config)
 
 #else	
 	MSG("Disable SoC MCLK, use external OSC\n");
-	i2s_refclk_disable();
+
+#if 0  // #if 0 by opsk, pls dont touch my gpios
+  i2s_refclk_disable();
 	i2s_refclk_gpio_in_config();
+#endif 
+
 #endif /* CONFIG_I2S_IN_MCLK */	
 
 	i2s_share_pin_config(ptri2s_config);	
