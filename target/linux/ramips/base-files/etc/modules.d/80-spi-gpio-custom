@@ -1,1 +1,1 @@
-spi-gpio-custom bus0=1,44,45,46,0,1000,37
+#  spi-gpio-custom bus0=1,44,45,46,0,1000,37
