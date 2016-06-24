@@ -18,7 +18,7 @@
 	pinctrl {
 		state_default: pinctrl0 {
 			default {
-				ralink,group = "wled", "i2c", "spi refclk", "uart0", "uart1";
+				ralink,group = "wled", "spi refclk", "uart0", "uart1";
 				ralink,function = "gpio";
 			};
 			i2s {
